@@ -3,6 +3,7 @@ package cgeo.geocaching.connector.gc;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Image;
 import cgeo.geocaching.LogEntry;
+import cgeo.geocaching.PocketQuerryList;
 import cgeo.geocaching.R;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.Settings;
@@ -880,6 +881,17 @@ public abstract class GCParser {
         return searchByAny(cacheType, isSearchForMyCaches(userName), showCaptcha, params, recaptchaReceiver);
     }
 
+    public static SearchResult searchByPocket(final String pocketGuid, final CacheType cacheType, final boolean showCaptcha, RecaptchaReceiver recaptchaReceiver) {
+        if (StringUtils.isBlank(pocketGuid)) {
+            Log.e("GCParser.searchByPocket: No guid name given");
+            return null;
+        }
+
+        final Parameters params = new Parameters("pq", pocketGuid);
+
+        return searchByAny(cacheType, false, showCaptcha, params, recaptchaReceiver);
+    }
+
     public static SearchResult searchByOwner(final String userName, final CacheType cacheType, final boolean showCaptcha, RecaptchaReceiver recaptchaReceiver) {
         if (StringUtils.isBlank(userName)) {
             Log.e("GCParser.searchByOwner: No user name given");
@@ -950,6 +962,51 @@ public abstract class GCParser {
         }
 
         return trackable;
+    }
+
+    public static List<PocketQuerryList> searchPocketQuerryList() {
+
+        final Parameters params = new Parameters();
+
+        String page = Login.getRequestLogged("http://www.geocaching.com/pocket/default.aspx", params);
+
+        if (StringUtils.isBlank(page)) {
+            Log.e("GCParser.searchPocketQuerryList: No data from server");
+            return null;
+        }
+
+        List<PocketQuerryList> list = new ArrayList<PocketQuerryList>();
+
+        int startPos = page.indexOf("class=\"PocketQueryListTable");
+        if (startPos == -1) {
+            Log.e("GCParser.searchPocketQuerryList: class \"PocketQueryListTable\" not found on page");
+            return null;
+        }
+
+        page = page.substring(startPos); // cut on <table
+
+        final String[] rows = page.split("checkTopCB");
+        //final int rows_count = rows.length;
+
+        //for (int z = 1; z < rows_count; z++) {
+        //  String row = rows[z];
+
+        final MatcherWrapper matcherPocket = new MatcherWrapper(GCConstants.PATTERN_LIST_PQ, page);
+
+        while (matcherPocket.find()) {
+                int maxCaches;
+                try {
+                    maxCaches = Integer.parseInt(matcherPocket.group(1));
+                } catch (NumberFormatException e) {
+                    maxCaches = 0;
+                }
+                final PocketQuerryList pqList = new PocketQuerryList(matcherPocket.group(2), matcherPocket.group(3), maxCaches);
+                list.add(pqList);
+            }
+
+        //}
+
+        return list;
     }
 
     public static ImmutablePair<StatusCode, String> postLog(final String geocode, final String cacheid, final String[] viewstates,
