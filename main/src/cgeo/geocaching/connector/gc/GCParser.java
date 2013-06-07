@@ -3,7 +3,7 @@ package cgeo.geocaching.connector.gc;
 import cgeo.geocaching.Geocache;
 import cgeo.geocaching.Image;
 import cgeo.geocaching.LogEntry;
-import cgeo.geocaching.PocketQuerryList;
+import cgeo.geocaching.PocketQueryList;
 import cgeo.geocaching.R;
 import cgeo.geocaching.SearchResult;
 import cgeo.geocaching.Settings;
@@ -964,22 +964,22 @@ public abstract class GCParser {
         return trackable;
     }
 
-    public static List<PocketQuerryList> searchPocketQuerryList() {
+    public static List<PocketQueryList> searchPocketQueryList() {
 
         final Parameters params = new Parameters();
 
         String page = Login.getRequestLogged("http://www.geocaching.com/pocket/default.aspx", params);
 
         if (StringUtils.isBlank(page)) {
-            Log.e("GCParser.searchPocketQuerryList: No data from server");
+            Log.e("GCParser.searchPocketQueryList: No data from server");
             return null;
         }
 
-        List<PocketQuerryList> list = new ArrayList<PocketQuerryList>();
+        List<PocketQueryList> list = new ArrayList<PocketQueryList>();
 
         int startPos = page.indexOf("class=\"PocketQueryListTable");
         if (startPos == -1) {
-            Log.e("GCParser.searchPocketQuerryList: class \"PocketQueryListTable\" not found on page");
+            Log.e("GCParser.searchPocketQueryList: class \"PocketQueryListTable\" not found on page");
             return null;
         }
 
@@ -1000,7 +1000,7 @@ public abstract class GCParser {
                 } catch (NumberFormatException e) {
                     maxCaches = 0;
                 }
-                final PocketQuerryList pqList = new PocketQuerryList(matcherPocket.group(2), matcherPocket.group(3), maxCaches);
+                final PocketQueryList pqList = new PocketQueryList(matcherPocket.group(2), matcherPocket.group(3), maxCaches);
                 list.add(pqList);
             }
 

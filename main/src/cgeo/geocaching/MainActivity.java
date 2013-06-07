@@ -543,10 +543,10 @@ public class MainActivity extends AbstractActivity {
 
                             @Override
                             public boolean onLongClick(View v) {
-                                new PocketQuerryList.UserInterface(MainActivity.this).promptForListSelection(new RunnableWithArgument<PocketQuerryList>() {
+                                new PocketQueryList.UserInterface(MainActivity.this).promptForListSelection(new RunnableWithArgument<PocketQueryList>() {
 
                                     @Override
-                                    public void run(PocketQuerryList pql) {
+                                    public void run(PocketQueryList pql) {
                                         cgeocaches.startActivityPocket(MainActivity.this, pql.getGuid(), pql.getName());
                                     }
                                 });

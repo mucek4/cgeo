@@ -17,12 +17,12 @@ public class PocketGeocacheListLoader extends AbstractSearchLoader {
     @Override
     public SearchResult runSearch() {
 
-        SearchResult search = new SearchResult();
         if (Settings.isGCConnectorActive()) {
-            search = GCParser.searchByPocket(guid, Settings.getCacheType(), Settings.isShowCaptcha(), this);
+            return GCParser.searchByPocket(guid, Settings.getCacheType(), Settings.isShowCaptcha(), this);
         }
 
-        return search;
+        return new SearchResult();
+
     }
 
 }

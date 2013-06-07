@@ -1,5 +1,6 @@
 package cgeo.geocaching;
 
+import cgeo.geocaching.activity.ActivityMixin;
 import cgeo.geocaching.connector.gc.GCParser;
 import cgeo.geocaching.utils.RunnableWithArgument;
 
@@ -13,13 +14,13 @@ import android.os.Message;
 
 import java.util.List;
 
-public final class PocketQuerryList {
+public final class PocketQueryList {
 
     private final String guid;
     private final int maxCaches;
     private final String name;
 
-    public PocketQuerryList(String guid, String name, int maxCaches) {
+    public PocketQueryList(String guid, String name, int maxCaches) {
         this.guid = guid;
         this.name = name;
         this.maxCaches = maxCaches;
@@ -27,8 +28,8 @@ public final class PocketQuerryList {
 
     public static class UserInterface {
 
-        List<PocketQuerryList> pocketQuerryList = null;
-        RunnableWithArgument<PocketQuerryList> runAfterwards;
+        List<PocketQueryList> pocketQuerryList = null;
+        RunnableWithArgument<PocketQueryList> runAfterwards;
 
         private Handler loadPocketQuerryHandler = new Handler() {
 
@@ -39,7 +40,7 @@ public final class PocketQuerryList {
                         waitDialog.dismiss();
                     }
 
-                    //showToast("No pocket querry stored!"); //TODO
+                    ActivityMixin.showToast(activity, "No pocket query stored!"); //TODO
 
                     return;
                 }
@@ -51,9 +52,9 @@ public final class PocketQuerryList {
                 final CharSequence[] items = new CharSequence[pocketQuerryList.size()];
 
                 for (int i = 0; i < pocketQuerryList.size(); i++) {
-                    PocketQuerryList pq = pocketQuerryList.get(i);
+                    PocketQueryList pq = pocketQuerryList.get(i);
 
-                    items[i] = pq.name + "(" + pq.maxCaches + ")";
+                    items[i] = pq.name + " (" + pq.maxCaches + ")";
 
                 }
 
@@ -79,7 +80,7 @@ public final class PocketQuerryList {
 
             @Override
             public void run() {
-                pocketQuerryList = GCParser.searchPocketQuerryList();
+                pocketQuerryList = GCParser.searchPocketQueryList();
                 handler.sendMessage(Message.obtain());
             }
         }
@@ -95,7 +96,7 @@ public final class PocketQuerryList {
             res = app.getResources();
         }
 
-        public void promptForListSelection(final RunnableWithArgument<PocketQuerryList> runAfterwards) {
+        public void promptForListSelection(final RunnableWithArgument<PocketQueryList> runAfterwards) {
 
             this.runAfterwards = runAfterwards;
 
