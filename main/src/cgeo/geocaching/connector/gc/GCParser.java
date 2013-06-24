@@ -985,26 +985,18 @@ public abstract class GCParser {
 
         page = page.substring(startPos); // cut on <table
 
-        final String[] rows = page.split("checkTopCB");
-        //final int rows_count = rows.length;
-
-        //for (int z = 1; z < rows_count; z++) {
-        //  String row = rows[z];
-
         final MatcherWrapper matcherPocket = new MatcherWrapper(GCConstants.PATTERN_LIST_PQ, page);
 
         while (matcherPocket.find()) {
-                int maxCaches;
-                try {
-                    maxCaches = Integer.parseInt(matcherPocket.group(1));
-                } catch (NumberFormatException e) {
-                    maxCaches = 0;
-                }
-                final PocketQueryList pqList = new PocketQueryList(matcherPocket.group(2), matcherPocket.group(3), maxCaches);
-                list.add(pqList);
+            int maxCaches;
+            try {
+                maxCaches = Integer.parseInt(matcherPocket.group(1));
+            } catch (NumberFormatException e) {
+                maxCaches = 0;
             }
-
-        //}
+            final PocketQueryList pqList = new PocketQueryList(matcherPocket.group(2), matcherPocket.group(3), maxCaches);
+            list.add(pqList);
+        }
 
         return list;
     }

@@ -28,19 +28,19 @@ public final class PocketQueryList {
 
     public static class UserInterface {
 
-        List<PocketQueryList> pocketQuerryList = null;
+        List<PocketQueryList> pocketQueryList = null;
         RunnableWithArgument<PocketQueryList> runAfterwards;
 
-        private Handler loadPocketQuerryHandler = new Handler() {
+        private Handler loadPocketQueryHandler = new Handler() {
 
             @Override
             public void handleMessage(Message msg) {
-                if ((pocketQuerryList == null) || (pocketQuerryList.size() == 0)) {
+                if ((pocketQueryList == null) || (pocketQueryList.size() == 0)) {
                     if (waitDialog != null) {
                         waitDialog.dismiss();
                     }
 
-                    ActivityMixin.showToast(activity, "No pocket query stored!"); //TODO
+                    ActivityMixin.showToast(activity, res.getString(R.string.warn_pocket_query_stored));
 
                     return;
                 }
@@ -49,21 +49,21 @@ public final class PocketQueryList {
                     waitDialog.dismiss();
                 }
 
-                final CharSequence[] items = new CharSequence[pocketQuerryList.size()];
+                final CharSequence[] items = new CharSequence[pocketQueryList.size()];
 
-                for (int i = 0; i < pocketQuerryList.size(); i++) {
-                    PocketQueryList pq = pocketQuerryList.get(i);
+                for (int i = 0; i < pocketQueryList.size(); i++) {
+                    PocketQueryList pq = pocketQueryList.get(i);
 
                     items[i] = pq.name + " (" + pq.maxCaches + ")";
 
                 }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("Choose Pocket Querry"); //TODO
+                builder.setTitle(res.getString(R.string.search_pocket_select));
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int itemId) {
-                        runAfterwards.run(pocketQuerryList.get(itemId));
+                        runAfterwards.run(pocketQueryList.get(itemId));
                     }
                 });
                 builder.create().show();
@@ -80,7 +80,7 @@ public final class PocketQueryList {
 
             @Override
             public void run() {
-                pocketQuerryList = GCParser.searchPocketQueryList();
+                pocketQueryList = GCParser.searchPocketQueryList();
                 handler.sendMessage(Message.obtain());
             }
         }
@@ -100,9 +100,9 @@ public final class PocketQueryList {
 
             this.runAfterwards = runAfterwards;
 
-            waitDialog = ProgressDialog.show(activity, "Pocket querry", "Loading a list of PQs", true, true); //TODO
+            waitDialog = ProgressDialog.show(activity, res.getString(R.string.search_pocket_title), res.getString(R.string.search_pocket_loading), true, true);
 
-            LoadPocketQuerryListThread thread = new LoadPocketQuerryListThread(loadPocketQuerryHandler);
+            LoadPocketQuerryListThread thread = new LoadPocketQuerryListThread(loadPocketQueryHandler);
             thread.start();
         }
 

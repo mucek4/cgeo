@@ -1705,7 +1705,7 @@ public class cgeocaches extends AbstractListActivity implements FilteredActivity
 
     public static void startActivityPocket(final AbstractActivity context, final String guid, final String name) {
         if (guid == null) {
-            context.showToast(cgeoapplication.getInstance().getString(R.string.warn_no_keyword)); //TODO
+            context.showToast(cgeoapplication.getInstance().getString(R.string.warn_pocket_query_select));
             return;
         }
         final Intent cachesIntent = new Intent(context, cgeocaches.class);
